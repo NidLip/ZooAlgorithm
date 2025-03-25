@@ -78,7 +78,7 @@ public class LinkedList
     }
 
     public void display()
-    {git 
+    {
         Node current = head;
         while (current != null)
         {
