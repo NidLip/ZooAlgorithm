@@ -49,7 +49,7 @@ public class AnimalGUI extends JFrame
         JPanel topPanel = new JPanel(new FlowLayout());
         dsComboBox = new JComboBox<>(new String[]{"Dynamic Array", "Linked List", "Binary Search Tree"});
         algoComboBox = new JComboBox<>(new String[]{"MergeSort", "QuickSort", "SequentialSearch", "BinarySearch", "General Search"});
-        sortByComboBox = new JComboBox<>(new String[]{"ID", "Species", "Age", "Herbivore"});
+        sortByComboBox = new JComboBox<>(new String[]{"ID", "Species", "Age", "Diet (Herbivore/Carnivore)"});
         searchField = new JTextField(10);
         JButton executeButton = new JButton("Execute Algorithm");
         topPanel.add(new JLabel("Data Structure:"));
@@ -89,29 +89,30 @@ public class AnimalGUI extends JFrame
         SwingUtilities.invokeLater(AnimalGUI::new);
     }
 
-    private void importData()
-    {
+    private void importData() {
         JFileChooser fileChooser = new JFileChooser();
         int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION)
-        {
+        if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             tableModel.setRowCount(0);
-            try
-            {
+            try {
                 importedAnimals = CSVHandler.importAnimalsFromCSV(file);
-                for (Animal animal : importedAnimals)
-                {
+                for (Animal animal : importedAnimals) {
                     tableModel.addRow(new Object[]{animal.getId(), animal.getName(), animal.getSpecies(), animal.getAge(), animal.isHerbivore()});
                 }
+                algorithmOutputArea.setText("");
+                searchField.setText("");
+                algoComboBox.setSelectedIndex(0);
+                dsComboBox.setSelectedIndex(0);
+                sortByComboBox.setSelectedIndex(0);
                 algorithmOutputArea.append("Imported " + importedAnimals.size() + " animals.\n");
-            } catch (IOException ex)
-            {
+            } catch (IOException ex) {
                 algorithmOutputArea.append("Error reading file.\n");
             }
             convertDataStructure();
         }
     }
+
 
     private void convertDataStructure()
     {
@@ -174,11 +175,6 @@ public class AnimalGUI extends JFrame
                 resultMsg = handleSort(dsType, algo, timer);
                 break;
             case "BinarySearch":
-                if (!"Dynamic Array".equals(dsType))
-                {
-                    algorithmOutputArea.append(algo + " is only available for Dynamic Array.\n");
-                    return;
-                }
                 resultMsg = handleBinarySearch(searchKey, timer);
                 break;
             case "SequentialSearch":
@@ -206,7 +202,7 @@ public class AnimalGUI extends JFrame
                 return Comparator.comparing(Animal::getSpecies, String.CASE_INSENSITIVE_ORDER);
             case "Age":
                 return Comparator.comparingInt(Animal::getAge);
-            case "Herbivore":
+            case "Diet (Herbivore/Carnivore)":
                 return Comparator.comparing(Animal::isHerbivore);
             case "ID":
             default:
@@ -214,71 +210,64 @@ public class AnimalGUI extends JFrame
         }
     }
 
-    private String handleSort(String dsType, String algo, Timer timer)
-    {
-        Comparator<Animal> comparator = getComparator();
-        double duration;
-        if ("Dynamic Array".equals(dsType))
-        {
-            Animal[] animalArray = new Animal[dynamicArray.getSize()];
-            for (int i = 0; i < dynamicArray.getSize(); i++)
-            {
-                animalArray[i] = dynamicArray.get(i);
+    private Animal[] getAnimalArrayFromCurrentDS() {
+        if ("Dynamic Array".equals(currentDS) && dynamicArray != null) {
+            Animal[] array = new Animal[dynamicArray.getSize()];
+            for (int i = 0; i < dynamicArray.getSize(); i++) {
+                array[i] = dynamicArray.get(i);
             }
-            timer.start();
-            if ("MergeSort".equals(algo))
-            {
-                MergeSort.sort(animalArray, comparator);
-            } else
-            {
-                QuickSort.sort(animalArray, comparator);
-            }
-            duration = timer.stop();
-            StringBuilder sb = new StringBuilder(algo + " result:\n");
-            for (Animal a : animalArray)
-            {
-                sb.append(a).append("\n");
-            }
-            infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: " + dsType +
-                    " | Algorithm: " + algo + " | Speed: " + duration + " ms");
-            return sb.toString();
+            return array;
+        } else if ("Linked List".equals(currentDS) && linkedList != null) {
+            return linkedList.toArray();
         }
-        if ("Linked List".equals(dsType))
-        {
-            Animal[] array = linkedList.toArray();
-            timer.start();
-            if ("MergeSort".equals(algo))
-            {
-                MergeSort.sort(array, comparator);
-            } else
-            {
-                QuickSort.sort(array, comparator);
-            }
-            duration = timer.stop();
-            linkedList.fromArray(array);
-            StringBuilder sb = new StringBuilder(algo + " result:\n");
-            for (Animal a : array)
-            {
-                sb.append(a).append("\n");
-            }
-            infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: " + dsType +
-                    " | Algorithm: " + algo + " | Speed: " + duration + " ms");
-            return sb.toString();
-        }
-        algorithmOutputArea.append(algo + " is not available for Binary Search Tree.\n");
-        return "";
+        return new Animal[0];
     }
 
-    private String handleBinarySearch(String searchKey, Timer timer)
-    {
-        try
-        {
+    private String handleSort(String dsType, String algo, Timer timer) {
+        if ("Binary Search Tree".equals(dsType)) {
+            JOptionPane.showMessageDialog(this,
+                    algo + " is not available for Binary Search Tree.\n\nBST is already sorted by name using its internal structure.",
+                    "Sorting Disabled",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            algorithmOutputArea.append("[Info] " + algo + " is not available for Binary Search Tree.\n" +
+                    "The tree is already sorted alphabetically by name using in-order traversal.\n");
+            return "";
+        }
+
+        Comparator<Animal> comparator = getComparator();
+        Animal[] animalArray = getAnimalArrayFromCurrentDS();
+        timer.start();
+        if ("MergeSort".equals(algo)) {
+            MergeSort.sort(animalArray, comparator);
+        } else {
+            QuickSort.sort(animalArray, comparator);
+        }
+        double duration = timer.stop();
+        if ("Linked List".equals(dsType)) {
+            linkedList.fromArray(animalArray);
+        }
+        StringBuilder sb = new StringBuilder(algo + " result:\n");
+        for (Animal a : animalArray) {
+            sb.append(a).append("\n");
+        }
+        infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: " + dsType +
+                " | Algorithm: " + algo + " | Speed: " + duration + " ms");
+        return sb.toString();
+    }
+
+    private String handleBinarySearch(String searchKey, Timer timer) {
+        if (!"Dynamic Array".equals(currentDS)) {
+            JOptionPane.showMessageDialog(SwingUtilities.getWindowAncestor(animalTable),
+                    "BinarySearch is only available for Dynamic Array.\nOther data structures do not support index-based access.",
+                    "Search Not Supported",
+                    JOptionPane.WARNING_MESSAGE);
+            algorithmOutputArea.append("[Warning] BinarySearch is only available for Dynamic Array.\n");
+            return "";
+        }
+        try {
             int targetId = Integer.parseInt(searchKey);
-            Animal[] animalArray = new Animal[dynamicArray.getSize()];
-            for (int i = 0; i < dynamicArray.getSize(); i++)
-            {
-                animalArray[i] = dynamicArray.get(i);
-            }
+            Animal[] animalArray = getAnimalArrayFromCurrentDS();
             Comparator<Animal> byId = Comparator.comparingInt(Animal::getId);
             MergeSort.sort(animalArray, byId);
             timer.start();
@@ -287,51 +276,44 @@ public class AnimalGUI extends JFrame
             infoLabel.setText("Dataset: " + importedAnimals.size() +
                     " | Data Structure: Dynamic Array | Algorithm: BinarySearch | Speed: " + duration + " ms");
             return (index != -1) ? "BinarySearch: Found at index " + index : "BinarySearch: Not found";
-        } catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             algorithmOutputArea.append("Enter valid numeric ID for search.\n");
             return "";
         }
     }
 
-    private String handleSequentialSearch(String dsType, String searchKey, Timer timer)
-    {
-        if (searchKey.isEmpty())
-        {
+    private String handleSequentialSearch(String dsType, String searchKey, Timer timer) {
+        if (searchKey.isEmpty()) {
             algorithmOutputArea.append("Enter valid numeric ID for SequentialSearch.\n");
             return "";
         }
-        try
-        {
+        try {
             int targetId = Integer.parseInt(searchKey);
             timer.start();
-            if ("Dynamic Array".equals(dsType))
-            {
-                Animal[] array = new Animal[dynamicArray.getSize()];
-                for (int i = 0; i < dynamicArray.getSize(); i++)
-                {
-                    array[i] = dynamicArray.get(i);
-                }
+            if ("Dynamic Array".equals(dsType)) {
+                Animal[] array = getAnimalArrayFromCurrentDS();
                 Comparator<Animal> byId = Comparator.comparingInt(Animal::getId);
                 int index = SequentialSearch.search(array, new Animal(targetId, "", "", 0, false), byId);
                 double duration = timer.stop();
                 infoLabel.setText("Dataset: " + importedAnimals.size() +
                         " | Data Structure: Dynamic Array | Algorithm: SequentialSearch | Speed: " + duration + " ms");
                 return (index != -1) ? "SequentialSearch: Found at index " + index : "SequentialSearch: Not found";
-            } else if ("Linked List".equals(dsType))
-            {
+            } else if ("Linked List".equals(dsType)) {
                 Animal found = linkedList.sequentialSearch(targetId);
                 double duration = timer.stop();
                 infoLabel.setText("Dataset: " + importedAnimals.size() +
                         " | Data Structure: Linked List | Algorithm: SequentialSearch | Speed: " + duration + " ms");
                 return (found != null) ? "SequentialSearch: Found\n" + found : "SequentialSearch: Not found";
-            } else
-            {
-                algorithmOutputArea.append("SequentialSearch is not implemented for BST.\n");
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "SequentialSearch is not available for Binary Search Tree.\n\nBST is already structured for efficient name-based lookup.",
+                        "Search Not Supported",
+                        JOptionPane.WARNING_MESSAGE);
+                algorithmOutputArea.append("[Warning] SequentialSearch is not available for Binary Search Tree.\n" +
+                        "BST supports search only by name using its own logic.\n");
                 return "";
             }
-        } catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             algorithmOutputArea.append("Enter valid numeric ID for search.\n");
             return "";
         }
@@ -339,11 +321,16 @@ public class AnimalGUI extends JFrame
 
     private String handleGeneralSearch(String searchKey, Timer timer)
     {
-        if (searchKey.isEmpty())
-        {
-            algorithmOutputArea.append("Enter a search key for General Search.\n");
+        if ("Binary Search Tree".equals(currentDS)) {
+            JOptionPane.showMessageDialog(this,
+                    "General Search is not supported on Binary Search Tree.\nIt is optimized only for Dynamic Array or Linked List.",
+                    "Not Available",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            algorithmOutputArea.append("[Warning] General Search is disabled for Binary Search Tree.\n");
             return "";
         }
+
         timer.start();
         int count = 0;
         String lowerKey = searchKey.toLowerCase();
