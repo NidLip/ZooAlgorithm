@@ -4,18 +4,6 @@ import models.Animal;
 
 public class BinarySearchTree
 {
-    private class Node
-    {
-        Animal animal;
-        Node left, right;
-
-        Node(Animal animal)
-        {
-            this.animal = animal;
-            left = right = null;
-        }
-    }
-
     private Node root;
 
     public BinarySearchTree()
@@ -38,8 +26,7 @@ public class BinarySearchTree
         if (animal.getName().compareToIgnoreCase(root.animal.getName()) < 0)
         {
             root.left = insertRec(root.left, animal);
-        }
-        else if (animal.getName().compareToIgnoreCase(root.animal.getName()) > 0)
+        } else if (animal.getName().compareToIgnoreCase(root.animal.getName()) > 0)
         {
             root.right = insertRec(root.right, animal);
         }
@@ -78,6 +65,18 @@ public class BinarySearchTree
             inOrderRec(root.left);
             System.out.println(root.animal);
             inOrderRec(root.right);
+        }
+    }
+
+    private class Node
+    {
+        Animal animal;
+        Node left, right;
+
+        Node(Animal animal)
+        {
+            this.animal = animal;
+            left = right = null;
         }
     }
 }

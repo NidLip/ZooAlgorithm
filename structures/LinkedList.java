@@ -4,17 +4,6 @@ import models.Animal;
 
 public class LinkedList
 {
-    private class Node {
-        Animal animal;
-        Node next;
-
-        Node(Animal animal)
-        {
-            this.animal = animal;
-            this.next = null;
-        }
-    }
-
     private Node head;
 
     public LinkedList()
@@ -28,8 +17,7 @@ public class LinkedList
         if (head == null)
         {
             head = newNode;
-        }
-        else
+        } else
         {
             Node current = head;
             while (current.next != null)
@@ -43,13 +31,11 @@ public class LinkedList
     public boolean remove(int id)
     {
         if (head == null) return false;
-
         if (head.animal.getId() == id)
         {
             head = head.next;
             return true;
         }
-
         Node current = head;
         while (current.next != null)
         {
@@ -84,6 +70,47 @@ public class LinkedList
         {
             System.out.println(current.animal);
             current = current.next;
+        }
+    }
+
+    public Animal[] toArray()
+    {
+        int size = 0;
+        Node temp = head;
+        while (temp != null)
+        {
+            size++;
+            temp = temp.next;
+        }
+        Animal[] arr = new Animal[size];
+        Node current = head;
+        int i = 0;
+        while (current != null)
+        {
+            arr[i++] = current.animal;
+            current = current.next;
+        }
+        return arr;
+    }
+
+    public void fromArray(Animal[] arr)
+    {
+        head = null;
+        for (Animal a : arr)
+        {
+            add(a);
+        }
+    }
+
+    private class Node
+    {
+        Animal animal;
+        Node next;
+
+        Node(Animal animal)
+        {
+            this.animal = animal;
+            this.next = null;
         }
     }
 }

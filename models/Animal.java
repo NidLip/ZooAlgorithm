@@ -17,17 +17,55 @@ public class Animal
         this.isHerbivore = isHerbivore;
     }
 
-    public int getId() { return this.id; }
-    public String getName() { return this.name; }
-    public String getSpecies() { return this.species; }
-    public int getAge() { return this.age; }
-    public boolean isHerbivore() { return this.isHerbivore; }
+    public int getId()
+    {
+        return this.id;
+    }
 
-    public void setId(int id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setSpecies(String species) { this.species = species; }
-    public void setAge(int age) { this.age = age; }
-    public void setHerbivore(boolean herbivore) { isHerbivore = herbivore; }
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getSpecies()
+    {
+        return this.species;
+    }
+
+    public void setSpecies(String species)
+    {
+        this.species = species;
+    }
+
+    public int getAge()
+    {
+        return this.age;
+    }
+
+    public void setAge(int age)
+    {
+        this.age = age;
+    }
+
+    public boolean isHerbivore()
+    {
+        return this.isHerbivore;
+    }
+
+    public void setHerbivore(boolean herbivore)
+    {
+        isHerbivore = herbivore;
+    }
 
     public String getDiet()
     {
