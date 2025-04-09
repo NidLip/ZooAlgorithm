@@ -257,33 +257,20 @@ public class AnimalGUI extends JFrame
 
     private String handleSort(String dsType, String algo, Timer timer)
     {
-        if ("Binary Search Tree".equals(dsType))
-        {
-            JOptionPane.showMessageDialog(this,
-                    algo + " is not available for Binary Search Tree.\n\nBST is already sorted by name using its internal structure.",
-                    "Sorting Disabled",
-                    JOptionPane.INFORMATION_MESSAGE);
-            algorithmOutputArea.append("[Info] " + algo + " is not available for Binary Search Tree.\nThe tree is already sorted alphabetically by name using in-order traversal.\n");
-            return "";
-        }
         Comparator<Animal> comparator = getComparator();
         Animal[] animalArray = getAnimalArrayFromCurrentDS();
         timer.start();
-        if ("MergeSort".equals(algo))
-        {
+        if ("MergeSort".equals(algo)) {
             MergeSort.sort(animalArray, comparator);
-        } else
-        {
+        } else {
             QuickSort.sort(animalArray, comparator);
         }
         double duration = timer.stop();
-        if ("Linked List".equals(dsType) && linkedList != null)
-        {
+        if ("Linked List".equals(dsType) && linkedList != null) {
             linkedList.fromArray(animalArray);
         }
         StringBuilder sb = new StringBuilder(algo + " result:\n");
-        for (Animal a : animalArray)
-        {
+        for (Animal a : animalArray) {
             sb.append(a).append("\n");
         }
         infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: " + dsType + " | Algorithm: " + algo + " | Speed: " + duration + " ms");
@@ -362,7 +349,8 @@ public class AnimalGUI extends JFrame
                 algorithmOutputArea.append("[Warning] SequentialSearch is not available for Binary Search Tree.\nBST supports search only by name using its own logic.\n");
                 return "";
             }
-        } catch (NumberFormatException e)
+        }
+        catch (NumberFormatException e)
         {
             algorithmOutputArea.append("Enter valid numeric ID for search.\n");
             return "";
