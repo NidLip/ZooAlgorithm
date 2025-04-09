@@ -83,6 +83,16 @@ public class AnimalGUI extends JFrame
         executeButton.addActionListener(e -> executeAlgorithm());
         dsComboBox.addActionListener(e -> convertDataStructure());
 
+        algoComboBox.addActionListener(e -> {
+            String selectedAlgo = (String) algoComboBox.getSelectedItem();
+            if ("General Search".equals(selectedAlgo)) {
+                JOptionPane.showMessageDialog(this,
+                        "General Search uses species-based search.\nPlease enter an animal species (e.g., 'lion') in the search key.",
+                        "General Search Information",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
         setVisible(true);
     }
 
@@ -159,6 +169,15 @@ public class AnimalGUI extends JFrame
                 linkedList = null;
                 break;
         }
+
+        if ("Binary Search Tree".equals(dsType)) {
+            algoComboBox.setEnabled(false);
+            sortByComboBox.setEnabled(false);
+        } else {
+            algoComboBox.setEnabled(true);
+            sortByComboBox.setEnabled(true);
+        }
+
         infoLabel.setText("Dataset size: " + importedAnimals.size() + " | Data Structure: " + dsType);
     }
 
@@ -193,6 +212,19 @@ public class AnimalGUI extends JFrame
             algorithmOutputArea.append("No data available. Please import a file.\n");
             return;
         }
+
+        if ("Binary Search Tree".equals(currentDS)) {
+            List<Animal> sortedAnimals = bst.inorderTraversal();
+            StringBuilder sb = new StringBuilder("BST In-Order Sorted Result:\n");
+            for (Animal animal : sortedAnimals)
+            {
+                sb.append(animal).append("\n");
+            }
+            algorithmOutputArea.setText(sb.toString());
+            infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: Binary Search Tree | Sorted by Name");
+            return;
+        }
+
         String dsType = currentDS;
         String algo = (String) algoComboBox.getSelectedItem();
         String searchKey = searchField.getText().trim();

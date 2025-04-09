@@ -1,6 +1,8 @@
 package structures;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class BinarySearchTree<T>
 {
@@ -46,22 +48,25 @@ public class BinarySearchTree<T>
         {
             return root.value;
         }
-        return comparator.compare(element, root.value) < 0 ?
-                searchRec(root.left, element) : searchRec(root.right, element);
+        return comparator.compare(element, root.value) < 0
+                ? searchRec(root.left, element)
+                : searchRec(root.right, element);
     }
 
-    public void inOrderTraversal()
+    public List<T> inorderTraversal()
     {
-        inOrderRec(root);
+        List<T> result = new ArrayList<>();
+        inOrderRec(root, result);
+        return result;
     }
 
-    private void inOrderRec(Node<T> root)
+    private void inOrderRec(Node<T> node, List<T> result)
     {
-        if (root != null)
+        if (node != null)
         {
-            inOrderRec(root.left);
-            System.out.println(root.value);
-            inOrderRec(root.right);
+            inOrderRec(node.left, result);
+            result.add(node.value);
+            inOrderRec(node.right, result);
         }
     }
 
