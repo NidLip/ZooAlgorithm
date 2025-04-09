@@ -1,45 +1,44 @@
 package structures;
 
-import models.Animal;
-
 import java.util.Arrays;
 
-public class DynamicArray
+public class DynamicArray<T>
 {
-    private Animal[] array;
+    private T[] array;
     private int size;
 
+    @SuppressWarnings("unchecked")
     public DynamicArray()
     {
-        array = new Animal[10];
+        array = (T[]) new Object[10];
         size = 0;
     }
 
-    public void add(Animal animal)
+    public void add(T element)
     {
         if (size == array.length)
         {
             array = Arrays.copyOf(array, array.length * 2);
         }
-        array[size++] = animal;
+        array[size++] = element;
     }
 
-    public boolean remove(int id)
+    public boolean remove(T element)
     {
         for (int i = 0; i < size; i++)
         {
-            if (array[i].getId() == id)
+            if (array[i].equals(element))
             {
                 System.arraycopy(array, i + 1, array, i, size - i - 1);
                 size--;
-                array[size] = null; // Allow garbage collection
+                array[size] = null;
                 return true;
             }
         }
         return false;
     }
 
-    public Animal get(int index)
+    public T get(int index)
     {
         if (index < 0 || index >= size)
         {
@@ -48,9 +47,23 @@ public class DynamicArray
         return array[index];
     }
 
+    public void set(int index, T element)
+    {
+        if (index < 0 || index >= size)
+        {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+        array[index] = element;
+    }
+
     public int getSize()
     {
         return size;
+    }
+
+    public T[] toArray()
+    {
+        return Arrays.copyOf(array, size);
     }
 
     public void display()

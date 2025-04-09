@@ -1,56 +1,53 @@
 package structures;
 
-import models.Animal;
+import java.util.Comparator;
 
-public class BinarySearchTree
+public class BinarySearchTree<T>
 {
-    private Node root;
+    private Node<T> root;
+    private Comparator<T> comparator;
 
-    public BinarySearchTree()
+    public BinarySearchTree(Comparator<T> comparator)
     {
+        this.comparator = comparator;
         root = null;
     }
 
-    public void insert(Animal animal)
+    public void insert(T element)
     {
-        root = insertRec(root, animal);
+        root = insertRec(root, element);
     }
 
-    private Node insertRec(Node root, Animal animal)
+    private Node<T> insertRec(Node<T> root, T element)
     {
         if (root == null)
         {
-            return new Node(animal);
+            return new Node<>(element);
         }
-
-        if (animal.getName().compareToIgnoreCase(root.animal.getName()) < 0)
+        if (comparator.compare(element, root.value) < 0)
         {
-            root.left = insertRec(root.left, animal);
-        } else if (animal.getName().compareToIgnoreCase(root.animal.getName()) > 0)
+            root.left = insertRec(root.left, element);
+        } else if (comparator.compare(element, root.value) > 0)
         {
-            root.right = insertRec(root.right, animal);
+            root.right = insertRec(root.right, element);
         }
-
         return root;
     }
 
-    public Animal search(String name)
+    public T search(T element)
     {
-        return searchRec(root, name);
+        return searchRec(root, element);
     }
 
-    private Animal searchRec(Node root, String name)
+    private T searchRec(Node<T> root, T element)
     {
-        if (root == null)
+        if (root == null) return null;
+        if (comparator.compare(element, root.value) == 0)
         {
-            return null;
+            return root.value;
         }
-        if (name.equalsIgnoreCase(root.animal.getName()))
-        {
-            return root.animal;
-        }
-        return name.compareToIgnoreCase(root.animal.getName()) < 0 ?
-                searchRec(root.left, name) : searchRec(root.right, name);
+        return comparator.compare(element, root.value) < 0 ?
+                searchRec(root.left, element) : searchRec(root.right, element);
     }
 
     public void inOrderTraversal()
@@ -58,24 +55,24 @@ public class BinarySearchTree
         inOrderRec(root);
     }
 
-    private void inOrderRec(Node root)
+    private void inOrderRec(Node<T> root)
     {
         if (root != null)
         {
             inOrderRec(root.left);
-            System.out.println(root.animal);
+            System.out.println(root.value);
             inOrderRec(root.right);
         }
     }
 
-    private class Node
+    private static class Node<T>
     {
-        Animal animal;
-        Node left, right;
+        T value;
+        Node<T> left, right;
 
-        Node(Animal animal)
+        Node(T value)
         {
-            this.animal = animal;
+            this.value = value;
             left = right = null;
         }
     }

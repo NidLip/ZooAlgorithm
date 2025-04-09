@@ -1,25 +1,23 @@
 package structures;
 
-import models.Animal;
-
-public class LinkedList
+public class LinkedList<T>
 {
-    private Node head;
+    private Node<T> head;
 
     public LinkedList()
     {
         this.head = null;
     }
 
-    public void add(Animal animal)
+    public void add(T element)
     {
-        Node newNode = new Node(animal);
+        Node<T> newNode = new Node<>(element);
         if (head == null)
         {
             head = newNode;
         } else
         {
-            Node current = head;
+            Node<T> current = head;
             while (current.next != null)
             {
                 current = current.next;
@@ -28,18 +26,18 @@ public class LinkedList
         }
     }
 
-    public boolean remove(int id)
+    public boolean remove(T element)
     {
         if (head == null) return false;
-        if (head.animal.getId() == id)
+        if (head.value.equals(element))
         {
             head = head.next;
             return true;
         }
-        Node current = head;
+        Node<T> current = head;
         while (current.next != null)
         {
-            if (current.next.animal.getId() == id)
+            if (current.next.value.equals(element))
             {
                 current.next = current.next.next;
                 return true;
@@ -49,67 +47,54 @@ public class LinkedList
         return false;
     }
 
-    public Animal sequentialSearch(int id)
+    public T[] toArray()
     {
-        Node current = head;
+        int count = 0;
+        Node<T> current = head;
         while (current != null)
         {
-            if (current.animal.getId() == id)
-            {
-                return current.animal;
-            }
+            count++;
             current = current.next;
         }
-        return null;
-    }
-
-    public void display()
-    {
-        Node current = head;
-        while (current != null)
-        {
-            System.out.println(current.animal);
-            current = current.next;
-        }
-    }
-
-    public Animal[] toArray()
-    {
-        int size = 0;
-        Node temp = head;
-        while (temp != null)
-        {
-            size++;
-            temp = temp.next;
-        }
-        Animal[] arr = new Animal[size];
-        Node current = head;
+        @SuppressWarnings("unchecked")
+        T[] arr = (T[]) new Object[count];
+        current = head;
         int i = 0;
         while (current != null)
         {
-            arr[i++] = current.animal;
+            arr[i++] = current.value;
             current = current.next;
         }
         return arr;
     }
 
-    public void fromArray(Animal[] arr)
+    public void fromArray(T[] arr)
     {
         head = null;
-        for (Animal a : arr)
+        for (T element : arr)
         {
-            add(a);
+            add(element);
         }
     }
 
-    private class Node
+    public void display()
     {
-        Animal animal;
-        Node next;
-
-        Node(Animal animal)
+        Node<T> current = head;
+        while (current != null)
         {
-            this.animal = animal;
+            System.out.println(current.value);
+            current = current.next;
+        }
+    }
+
+    private static class Node<T>
+    {
+        T value;
+        Node<T> next;
+
+        Node(T value)
+        {
+            this.value = value;
             this.next = null;
         }
     }
