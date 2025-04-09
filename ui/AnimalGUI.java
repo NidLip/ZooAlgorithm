@@ -83,9 +83,11 @@ public class AnimalGUI extends JFrame
         executeButton.addActionListener(e -> executeAlgorithm());
         dsComboBox.addActionListener(e -> convertDataStructure());
 
-        algoComboBox.addActionListener(e -> {
+        algoComboBox.addActionListener(e ->
+        {
             String selectedAlgo = (String) algoComboBox.getSelectedItem();
-            if ("General Search".equals(selectedAlgo)) {
+            if ("General Search".equals(selectedAlgo))
+            {
                 JOptionPane.showMessageDialog(this,
                         "General Search uses species-based search.\nPlease enter an animal species (e.g., 'lion') in the search key.",
                         "General Search Information",
@@ -170,10 +172,12 @@ public class AnimalGUI extends JFrame
                 break;
         }
 
-        if ("Binary Search Tree".equals(dsType)) {
+        if ("Binary Search Tree".equals(dsType))
+        {
             algoComboBox.setEnabled(false);
             sortByComboBox.setEnabled(false);
-        } else {
+        } else
+        {
             algoComboBox.setEnabled(true);
             sortByComboBox.setEnabled(true);
         }
@@ -213,7 +217,8 @@ public class AnimalGUI extends JFrame
             return;
         }
 
-        if ("Binary Search Tree".equals(currentDS)) {
+        if ("Binary Search Tree".equals(currentDS))
+        {
             List<Animal> sortedAnimals = bst.inorderTraversal();
             StringBuilder sb = new StringBuilder("BST In-Order Sorted Result:\n");
             for (Animal animal : sortedAnimals)
@@ -260,17 +265,21 @@ public class AnimalGUI extends JFrame
         Comparator<Animal> comparator = getComparator();
         Animal[] animalArray = getAnimalArrayFromCurrentDS();
         timer.start();
-        if ("MergeSort".equals(algo)) {
+        if ("MergeSort".equals(algo))
+        {
             MergeSort.sort(animalArray, comparator);
-        } else {
+        } else
+        {
             QuickSort.sort(animalArray, comparator);
         }
         double duration = timer.stop();
-        if ("Linked List".equals(dsType) && linkedList != null) {
+        if ("Linked List".equals(dsType) && linkedList != null)
+        {
             linkedList.fromArray(animalArray);
         }
         StringBuilder sb = new StringBuilder(algo + " result:\n");
-        for (Animal a : animalArray) {
+        for (Animal a : animalArray)
+        {
             sb.append(a).append("\n");
         }
         infoLabel.setText("Dataset: " + importedAnimals.size() + " | Data Structure: " + dsType + " | Algorithm: " + algo + " | Speed: " + duration + " ms");
@@ -349,8 +358,7 @@ public class AnimalGUI extends JFrame
                 algorithmOutputArea.append("[Warning] SequentialSearch is not available for Binary Search Tree.\nBST supports search only by name using its own logic.\n");
                 return "";
             }
-        }
-        catch (NumberFormatException e)
+        } catch (NumberFormatException e)
         {
             algorithmOutputArea.append("Enter valid numeric ID for search.\n");
             return "";
